@@ -1,0 +1,73 @@
+{% load static %}
+{% load tz %}
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-lg-12">
+          <h1>The Midnight Times | JSE</h1>
+          <form action="/search/">
+            <div class="input-group">
+              <input name="keyword" id="txt-keyword" type="text" class="form-control" placeholder="Search for..." value="{{keyword}}">
+              <span class="input-group-btn">
+                <input class="btn btn-default" type="submit" value="Search">
+              </span>
+            </div>
+            <div class="input-group" style="margin-top:5px;">
+              <select name="page_size" id="sel-page_size" class="form-control">
+                <option value="10">10</option> <option value="20">20</option> <option value="30">30</option>
+                <option value="40">40</option> <option value="50">50</option>
+              </select>
+            </div>
+          </form>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          {% if error %}
+            <div class="alert alert-danger alert-dismissible" role="alert" style="margin-top:20px;">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Error!</strong> {{ error }}
+            </div>
+          {% endif %}
+
+          <h5>Total Results: {{ total_results }}</h5>
+          <h5>no_of_pages: {{no_of_pages}} | page_size: {{page_size}} | current_page: {{page}}</h5>
+          <a href="#" id="btn-prev" class="btn btn-primary" style="margin-right:30px;"> << PREV</a>
+          <a href="#" id="btn-next" class="btn btn-primary">NEXT >> </a>
+        </div>
+      </div>
+
+      <div class="row">
+        {% for i in data %}
+        <a style="display:block;" href="{{i.url}}" target="_blank">
+          <div class="col-lg-12" style="color:black;background:rgb(240,240,240);margin:10px 0px 0px 0px;">
+            <h3>{{ i.title }}</h3>
+            <h4>By:- {{ i.author }} | Published:- {{ i.publishedAt|localtime }}</h4>
+            <h5>{{ i.description | escape }}</h5>
+            <h5>{{ i.content | escape }}</h5>
+          </div>
+          <hr/>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function(){
+        var prev_page = parseInt("{{page}}");
+        if(prev_page > 1) prev_page = prev_page - 1;
+        else prev_page = 1;
+        var prev_url = "/search/?keyword={{keyword}}&page="+prev_page;
+        $("#btn-prev").attr("href", prev_url);
+
+        var next_page = parseInt("{{page}}");
+        var no_of_pages = parseInt("{{no_of_pages}}");
+        if(next_page < no_of_pages) next_page = next_page + 1;
+        else next_page = 1;
+        var next_url = "/search/?keyword={{keyword}}&page="+next_page;
+        $("#btn-next").attr("href", next_url);
+      });
+    </script>

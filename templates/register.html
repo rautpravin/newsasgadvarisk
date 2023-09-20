@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block container %}
+
+<div class="row">
+    <div class="col-md-3 col-lg-4"></div>
+    <div class="col-md-6 col-lg-4">
+        <div id="frm" style="margin-top:10px;">
+            <form method="post" class="well well-sm" style="background:transparent;border-radius:0px;">
+                <h2 style="margin:10px 0px 10px 0px;text-align:center">REGISTER</h2>
+                <hr>
+                {% csrf_token %}
+                {{form|crispy}}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success btn-block">SUBMIT</button>
+                </div>
+                {% if error %}
+                <h5 style="color:red;">{{ error }}</h5>
+                {% endif %}
+                {% if status == 'ok' %}
+                <h4 style="color:green;text-align:center;">Registration success!</h4>
+            {% endif %}
+            </form>
+            <a class="btn btn-default" href="/login/">login now?</a>
+        </div>
+    </div>
+    <div class="col-md-3 col-lg-4"></div>
+</div>
+{% endblock container %}
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        relocfrm();
+    });
+
+    $(window).resize(function(){
+        relocfrm();
+    });
+
+    var relocfrm = function(){
+        var frmHeight = document.getElementById("frm").offsetHeight;
+        var winHeight = window.innerHeight;
+        try{
+            var h = parseInt((winHeight - frmHeight) / 2);
+            if(h>0) { $("#frm").css("margin-top", h+"px"); }
+        }catch(e){ console.error(e); }
+    }
+</script>
+{% endblock script %}

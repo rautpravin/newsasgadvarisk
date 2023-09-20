@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% include 'navbar.html' %}
+{% endblock navbar %}
+
+{% block container %}
+<div class="row">
+    {% if error %}
+    <div class="col-lg-12">
+        <h4 style="color:red;">{{error}}</h4>
+    </div>
+    {% endif %}
+
+    <div class="col-lg-12">
+        <div style="">
+            <form>
+                <table>
+                    <tr>
+                        <td>KEYWORD: </td>
+                        <td colspan="3"><input type="text" name="keyword" class="form-control" value="{{keyword}}"></td>
+                    </tr>
+                    <tr>
+                        <td>FROM DATE: </td>
+                        <td><input id="from-date" type="text" name="from_date" class="form-control" value="{{from_date}}"></td>
+                        <td>TO DATE: </td>
+                        <td><input id="to-date" type="text" name="to_date" class="form-control" value="{{to_date}}"></td>
+                    </tr>
+                    <tr>
+                        <td>PAGE SIZE: </td>
+                        <td>
+                            <select class="form-control" name="page_size">
+                                {% for i in sel_page_range %}
+                                {% if i == page_size %}
+                                <option value="{{i}}" selected>{{i}}</option>
+                                {% else %}
+                                <option value="{{i}}">{{i}}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td colspan="4" style="text-align: right;">
+                            <button type="submit" class="btn btn-primary" >Search</button>&nbsp;&nbsp;
+                            <button type="reset" class="btn btn-default">Reset</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="well well-sm" style="background:white;">
+            TOTAL RESULTS: {{ total_results }} | PAGE SIZE: {{ page_size }} | TOTAL PAGES: {{ total_pages }} | CURRENT PAGE: {{ page }}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        {% for i in data %}
+            <a href="{{i.news_url}}" target="_blank">
+            <div class="well well-sm" style="color:black;">
+                <h3>{{i.title}}</h3>
+                <h4>{{i.author}} | {{i.publishedAt}}</h4>
+                <h5>{{i.description}}</h5>
+                <h5>{{i.content}}</h5>
+            </div>
+            </a>
+        {% endfor %}
+    </div>
+    {{ newly_created }}
+</div>
+
+<div class="row" style="margin-bottom:40px;">
+    <div class="col-lg-12">
+        {% for i in total_pages_range %}
+        <a href="/search/?keyword={{keyword}}&from_date={{from_date}}&to_date={{to_date}}&page_size={{page_size}}&page={{i}}" class="btn btn-default" style="margin:7px 4px 0px 0px;">{{i}}</a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock container%}
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $("#from-date").datepicker({dateFormat: "yy-mm-dd"});
+        $("#to-date").datepicker({dateFormat: "yy-mm-dd"});
+    });
+</script>
+{% endblock script %}
