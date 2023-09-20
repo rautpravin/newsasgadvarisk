@@ -15,16 +15,25 @@ from django.contrib.auth.models import User
 class SearchPhrase(models.Model):
     keyword = models.CharField('phrase', max_length=500)
 
+    def __str__(self):
+        return f'{self.keyword}'
+
 
 class UserSearchPhrase(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_search_phrases')
     search_phrase = models.ForeignKey(SearchPhrase, on_delete=models.CASCADE, related_name='user_search_phrases')
     search_count = models.PositiveIntegerField('search count', default=1)
 
+    def __str__(self):
+        return f'user: {self.user}, search_phrase: {self.search_phrase}, search_count: {self.search_count}'
+
 
 class Source(models.Model):
     source_id = models.CharField('source id', max_length=100, blank=True, null=True, default=None)
     source_name = models.CharField('source name', max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f'source_id: {self.source_id}, source_name: {self.source_name}'
 
 
 class News(models.Model):
@@ -38,8 +47,14 @@ class News(models.Model):
     source = models.ForeignKey(Source, on_delete=models.SET_NULL, null=True, related_name='news')
     search_phrase = models.ForeignKey(SearchPhrase, on_delete=models.SET_NULL, null=True, related_name='news')
 
+    def __str__(self):
+        return f'title: {self.title}, author: {self.author}, publishedAt: {self.publishedAt}'
+
 
 def get_news_from_api(keyword, from_date=None, to_date=None, page_size=50, current_page=1):
+    """
+    fetch data from 3rd party api
+    """
     news_data = {'keyword': keyword, 'data': [], 'status': 'error', 'message': None, 'page_size': page_size, 'total_pages': 0, 'current_page': current_page}
     total_results = 0
     try:
@@ -68,6 +83,9 @@ def get_news_from_api(keyword, from_date=None, to_date=None, page_size=50, curre
 
 
 def load_data_from_api(keyword, data):
+    """
+    save data to local database if not exists
+    """
     newly_created = 0
     try:
         if keyword:
@@ -101,6 +119,9 @@ def load_data_from_api(keyword, data):
 
 
 def save_to_local_db(keyword):
+    """
+    saving all keyword related data regardless of from & to date to the local db.
+    """
     newly_created = 0
     f = True
     current_page = 1
